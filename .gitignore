@@ -1,0 +1,13 @@
+# scratch / working files
+_tmp_*/
+.zcode/
+*.bak
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+
+# private notes
+AUDIENCE_AND_FUNDING_PLAN.md

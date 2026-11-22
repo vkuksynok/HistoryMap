@@ -1,0 +1,14 @@
+{
+  "name": "Atlas of World History",
+  "short_name": "History Atlas",
+  "description": "Simultaneous historical events and figures on a satellite world map, with a time-window slider.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#070a10",
+  "theme_color": "#0a0e15",
+  "icons": [
+    { "src": "icon192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

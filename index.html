@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas of World History — simultaneous events on the map</title>
+<meta name="description" content="See the events and historical figures that happened at the same time, anywhere on Earth, from 3200 BC to today — on a satellite world map with a time-window slider.">
+<meta name="author" content="Volodymyr Kuksynok">
+<meta property="og:title" content="Atlas of World History">
+<meta property="og:description" content="What happened & who lived — at the same time, anywhere on Earth, 3200 BC to today.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icon512.png">
+<meta name="twitter:card" content="summary">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="History Atlas">
+<link rel="apple-touch-icon" href="icon192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0e15">
+<link rel="icon" href="icon192.png">
+<link rel="stylesheet" href="css/style.css">
+<script>window.__errs=[];window.addEventListener('error',function(e){__errs.push(e.message+' @ '+(e.filename||'')+':'+(e.lineno||''))});</script>
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand">
+    <span class="logo">🏛</span>
+    <span class="title" data-i18n="brandTitle">ATLAS OF WORLD HISTORY
+      <small data-i18n="brandSub">what happened & who lived — at the same time</small>
+    </span>
+  </div>
+
+  <div class="now">
+    <div class="now-year" id="yearNow">—</div>
+    <div class="now-meta">
+      <span id="eraNow"></span><span class="dotsep">·</span><span id="rangeNow"></span>
+    </div>
+    <div class="now-count" id="countNow"></div>
+  </div>
+
+  <div class="tools">
+    <!-- language dropdown — built by js/i18n.js from its LANG_META registry -->
+    <div class="langsw" id="langSwitch" data-i18n-title="langTitle"></div>
+    <input id="search" type="search" data-i18n-placeholder="searchPh" spellcheck="false">
+    <button id="btnTours" class="iconbtn wide" data-i18n="toursBtn" data-i18n-title="toursTitle">🎬 Tours</button>
+    <button id="btnShare" class="iconbtn" data-i18n-title="shareTitle">🔗</button>
+    <button id="btnPanel" class="iconbtn" data-i18n-title="panelTitle">📋</button>
+    <button id="btnEditor" class="iconbtn" data-i18n-title="editorTitle">🔒</button>
+    <button id="btnHelp" class="iconbtn" data-i18n-title="helpTitle">?</button>
+  </div>
+</header>
+
+<main id="main">
+  <div id="map"></div>
+
+  <div id="maptools">
+    <button id="btnZoomIn" data-i18n-title="zoomInTitle">＋</button>
+    <button id="btnZoomOut" data-i18n-title="zoomOutTitle">−</button>
+    <button id="btnGlobe" data-i18n-title="globeTitle">🌍</button>
+  </div>
+
+  <div id="attrib" data-i18n="attrib">Satellite imagery · zoom levels 0–4 &amp; 7 · Created by Volodymyr Kuksynok</div>
+
+  <aside id="sidepanel">
+    <div id="chips"></div>
+    <div id="list"></div>
+  </aside>
+
+  <div id="popup"></div>
+
+  <div id="hint" data-i18n="hint">Drag the map to pan · scroll to zoom · grab the timeline window below to travel through time</div>
+</main>
+
+<div id="tourMenu"></div>
+<div id="tourbar">
+  <b id="tourTitle"></b>
+  <span id="tourNote"></span>
+  <span class="tour-step" id="tourStep"></span>
+  <button id="tourNext" data-i18n="tourNext">Next ▸</button>
+  <button id="tourStop" data-i18n="tourStop">✕ Exit</button>
+</div>
+<div id="toast"></div>
+
+<footer id="timebar">
+  <div id="controls">
+    <button id="btnStart" data-i18n-title="btnStartTitle">⏮</button>
+    <button id="btnPrev" data-i18n-title="btnPrevTitle">⏪</button>
+    <button id="btnPlay" data-i18n="play" data-i18n-title="btnPlayTitle">▶ Play</button>
+    <button id="btnNext" data-i18n-title="btnNextTitle">⏩</button>
+    <button id="btnEnd" data-i18n-title="btnEndTitle">⏭</button>
+    <button id="btnSpeed" data-i18n-title="btnSpeedTitle">30 y/s</button>
+    <span class="spacer"></span>
+    <select id="periodSel" data-i18n-title="periodTitle"></select>
+    <button id="btnNarrower" data-i18n="spanNarrower" data-i18n-title="btnNarrowerTitle">− span</button>
+    <span id="spanLabel">Window: 100 years</span>
+    <button id="btnWider" data-i18n="spanWider" data-i18n-title="btnWiderTitle">＋ span</button>
+    <span class="ctl-sep"></span>
+    <button id="btnScaleIn" data-i18n-title="tlZoomInTitle">＋</button>
+    <button id="btnScaleOut" data-i18n-title="tlZoomOutTitle">−</button>
+    <button id="btnScaleFit" data-i18n-title="tlFitTitle">⤢</button>
+    <span class="ctl-sep"></span>
+    <input id="yearFrom" class="tl-date" type="text" inputmode="numeric" spellcheck="false"
+           data-i18n-placeholder="fromPh" data-i18n-title="fromToTitle" aria-label="period start year">
+    <input id="yearTo" class="tl-date" type="text" inputmode="numeric" spellcheck="false"
+           data-i18n-placeholder="toPh" data-i18n-title="fromToTitle" aria-label="period end year">
+  </div>
+  <div id="tlwrap"><canvas id="timeline"></canvas></div>
+</footer>
+
+<div id="help">
+  <div class="help-card">
+    <button id="helpClose" class="pp-x" data-i18n-title="closeTitle">×</button>
+    <h2 data-i18n="helpH2">Atlas of World History</h2>
+    <p data-i18n-html="helpIntro">See the events and historical figures that were happening <b>at the same time</b>, anywhere on Earth, from 3200 BC to today.</p>
+    <ul>
+      <li data-i18n-html="helpMap"><b>Map</b> — drag to pan, scroll or pinch to zoom (levels 0–7), double-click to zoom in.</li>
+      <li data-i18n-html="helpTimeline"><b>Timeline</b> (bottom) — the golden window is the visible period:
+        <ul>
+          <li data-i18n="helpTl1">drag the window to move through time,</li>
+          <li data-i18n="helpTl2">drag its edges (or the − span / ＋ span buttons) to change the span,</li>
+          <li data-i18n="helpTl3">click the ruler to jump there — scroll over the timeline to zoom its scale (drag pans when zoomed),</li>
+          <li data-i18n="helpTl4">click a colored bar in the ribbon to open that event,</li>
+          <li data-i18n="helpTl5">click an era name above the ribbon, or use the Period menu and the from–to fields, to select a specific period.</li>
+        </ul>
+      </li>
+      <li data-i18n-html="helpMarkers"><b>Markers</b> — circles are events, rounded squares are historical figures. A pulsing ring means it began inside the current window. Click for details.</li>
+      <li data-i18n-html="helpPlay"><b>Play</b> — watch history unfold year by year (Space).</li>
+      <li data-i18n-html="helpKeyboard"><b>Keyboard</b> — ← / → nudge time, Shift+← / → jump a full window, +/− zoom.</li>
+    </ul>
+    <p class="fine" data-i18n="helpFine">All imagery and data are served locally — the app works fully offline.</p>
+    <p class="fine credit" data-i18n-html="helpCredit">Created by <b>Volodymyr Kuksynok</b></p>
+  </div>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/projection.js"></script>
+<script src="js/data.js"></script>
+<script src="js/data_uk.js"></script>
+<script src="js/data_de.js"></script>
+<script src="js/data_es.js"></script>
+<script src="js/data_pt.js"></script>
+<script src="js/data_sv.js"></script>
+<script src="js/data_fi.js"></script>
+<script src="js/data_fr.js"></script>
+<script src="js/data_it.js"></script>
+<script src="js/data_no.js"></script>
+<script src="js/data_da.js"></script>
+<script src="js/territories.js"></script>
+<script src="js/cities.js"></script>
+<script src="js/tours.js"></script>
+<script src="js/map.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/overlay.js"></script>
+<script src="js/app.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/selftest.js"></script>
+<script>document.getElementById('btnEditor').onclick = () => HIST_EDITOR.open();</script>
+</body>
+</html>
